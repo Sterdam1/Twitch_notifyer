@@ -17,10 +17,27 @@ class DataBase:
                                    user_tg INTEGER, 
                                    user_email TEXT) """)
             
+    def get_col_names(self, table_name):
+        with self.db as con:
+            some_sql = con.execute(f"PRAGMA table_info('{table_name}')")
+            column_names = [i[1] for i in some_sql.fetchall()]
+            return column_names
+
+    def inster_info(self, table, data):
+        col_names = ', '.join(self.get_col_names(table)[1:])
+        format_data = ', '.join([f"'{d}'" for d in data])
+        with self.db as con:
+            some_sql = con.execute(f"INSERT INTO {table} ({col_names}) VALUES ({format_data})") 
+
+    # Функции разработчика(xd), не исаользуются в боте
     def get_table_names(self):
         with self.db as con:
             some_sql = con.execute(f"SELECT name FROM sqlite_master WHERE type='table'")
         return some_sql.fetchall()
+    
+    def drop(self, table_name):
+            with self.db as con:
+                some_sql = con.execute(f"DROP TABLE {table_name}")
     
 db = DataBase()
 print(db.get_table_names())
