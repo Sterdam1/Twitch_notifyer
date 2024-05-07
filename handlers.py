@@ -5,8 +5,8 @@ from texts import message_list
 from states import EmailState
 from aiogram.fsm.context import FSMContext
 import kb
-from sqlrequests import db
 router = Router()
+from sqlrequests import get_column_names, insert_info
 
 
 @router.message(Command("start"))
@@ -19,7 +19,12 @@ async def message_handler(msg: Message, state: FSMContext):
     cur_state = await state.get_state()
     if cur_state == 'EmailState:waiting_for_email':
         email = msg.text
+
         await msg.answer(f"Ваш email {email} записан")
+      
+        await insert_info('users', [msg.chat.id, email])
+
+
         
 @router.callback_query(lambda call: True)
 async def call_back_handler(call: CallbackQuery, state: FSMContext):

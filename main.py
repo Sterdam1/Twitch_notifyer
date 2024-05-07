@@ -8,7 +8,10 @@ from aiogram.fsm.storage.memory import MemoryStorage
 import config
 from handlers import router
 
+from sqlrequests import create_table
+
 async def main():
+    await create_table()
     bot = Bot(token=config.BOT_TOKEN, parse_mode=ParseMode.HTML)
     dp = Dispatcher(storage=MemoryStorage())
     dp.include_router(router)
@@ -18,4 +21,5 @@ async def main():
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    asyncio.run(main())
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
