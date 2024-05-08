@@ -29,7 +29,16 @@ async def get_column_names(table):
         column_names = [i[1] for i in await some_sql.fetchall()]
         await db.close()
         return column_names
-        
+
+async def get_col_by_col(table, col, filter, value):
+    async with aiosqlite.connect(DB_PATH) as db:
+        some_sql = await db.execute(f"SELECT {col} FROM {table} WHERE {filter} = {value}")  
+        result = await some_sql.fetchall()
+        await db.close()
+        if result:
+            return result[0][0]
+        else: 
+            return None
     
 async def insert_info(table, data):
     async with aiosqlite.connect(DB_PATH) as db:
