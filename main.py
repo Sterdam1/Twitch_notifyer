@@ -8,11 +8,12 @@ from aiogram.fsm.storage.memory import MemoryStorage
 import config
 from handlers import router
 
-from sqlrequests import create_table
+from sqlrequests import create_tables
+
+bot = Bot(token=config.BOT_TOKEN, parse_mode=ParseMode.HTML)
 
 async def main():
-    await create_table()
-    bot = Bot(token=config.BOT_TOKEN, parse_mode=ParseMode.HTML)
+    await create_tables()
     dp = Dispatcher(storage=MemoryStorage())
     dp.include_router(router)
     await bot.delete_webhook(drop_pending_updates=True)

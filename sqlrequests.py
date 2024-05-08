@@ -4,13 +4,20 @@ import aiosqlite
 
 DB_PATH = "db.sqlite3"
 
-async def create_table():
+async def create_tables():
     async with aiosqlite.connect(DB_PATH) as db:
         await db.execute(
             """CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY,
                 tg_id TEXT,
-                email TEXT
+                channel TEXT
+            )"""
+        )
+        await db.execute(
+            """CREATE TABLE IF NOT EXISTS twitchers (
+                id INTEGER PRIMARY KEY,
+                user_id TEXT,
+                twitch TEXT
             )"""
         )
         await db.commit()
@@ -34,3 +41,8 @@ async def insert_info(table, data):
         await db.commit()
         await db.close()
 
+async def drop_table(table):
+    async with aiosqlite.connect(DB_PATH) as db:
+        some_sql = await db.execute(f"DROP TABLE {table}")
+
+        await db.close()
