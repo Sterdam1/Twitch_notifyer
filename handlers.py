@@ -34,6 +34,7 @@ async def message_handler(msg: Message, state: FSMContext):
         # прописать try когда я разберусь с твич апи
         user_id = await get_col_by_col('users', 'id', 'tg_id', msg.chat.id)
         await insert_info('twitchers', [user_id, msg.text])
+        await state.set_state(state=ChooseState.null)
         
 @router.callback_query(lambda call: True)
 async def call_back_handler(call: CallbackQuery, state: FSMContext):
