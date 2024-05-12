@@ -1,6 +1,7 @@
 # В этом файле будут функции для 
 
 import aiosqlite
+import asyncio
 
 DB_PATH = "db.sqlite3"
 
@@ -50,8 +51,21 @@ async def insert_info(table, data):
         await db.commit()
         await db.close()
 
+async def get_all_streamers():
+    async with aiosqlite.connect(DB_PATH) as db:
+        some_sql = await db.execute("""SELECT twitchers.twitch, users.channel FROM twitchers
+                                        JOIN users ON users.id = twitchers.user_id """)
+        result = await some_sql.fetchall()
+        await db.close()
+
+        return result
+
 async def drop_table(table):
     async with aiosqlite.connect(DB_PATH) as db:
         some_sql = await db.execute(f"DROP TABLE {table}")
 
         await db.close()
+
+
+if __name__ == "__main__":
+    asyncio.run(get_all_streamers())

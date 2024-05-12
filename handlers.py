@@ -34,6 +34,7 @@ async def message_handler(msg: Message, state: FSMContext):
         # прописать try когда я разберусь с твич апи
         user_id = await get_col_by_col('users', 'id', 'tg_id', msg.chat.id)
         await insert_info('twitchers', [user_id, msg.text])
+        await msg.answer(text=f"Твич канал записан")
         await state.set_state(state=ChooseState.null)
         
 @router.callback_query(lambda call: True)
@@ -46,3 +47,5 @@ async def call_back_handler(call: CallbackQuery, state: FSMContext):
         else:
             # Надо сделать кнопку редактирования канала и добавления twitch
             await call.message.answer("Вы уже указали канал.")
+
+

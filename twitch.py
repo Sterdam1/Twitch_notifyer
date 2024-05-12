@@ -2,6 +2,7 @@ import aiohttp
 import asyncio
 import datetime
 import pytz
+import config
 
 # client_id = "x8oc2925t0s7f4mbu5hqyri18so9ld"  # Вставьте ваш Client ID, полученный при регистрации вашего приложения на Twitch
 # streamer_username = "buster"  # Имя стримера, чью трансляцию вы хотите отслеживать
@@ -20,7 +21,7 @@ async def get_stream_info(streamer_name, client_id, oauth_token):
             if data["data"]:
                 return streamer_name, data["data"][0]["started_at"]
             else:
-                return None
+                return streamer_name, None
 
 async def is_stream_recently_started(start_time):
     if start_time:
@@ -33,7 +34,7 @@ async def is_stream_recently_started(start_time):
 
 async def main():
     while True:
-        streamer_name, stream_start_time = await get_stream_info('buster')
+        streamer_name, stream_start_time = await get_stream_info('sterdammr', config.TWICH_CLIENT_ID, config.TWITCH_OAUTH_TOKEN)
         if stream_start_time:
             if await is_stream_recently_started(stream_start_time):
                 message = f"{streamer_name} начал(а) стрим недавно."
@@ -45,3 +46,6 @@ async def main():
         print(message)
         
         await asyncio.sleep(300)  # Подождать 5 минут перед следующей проверкой
+
+# if __name__ == "__main__":
+#     asyncio.run(main())
