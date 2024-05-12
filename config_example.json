@@ -1,4 +1,7 @@
 {
     "tg_token": "Bot token",
-    "twith_api_token": "twith_api_token"
+    "twitch": {
+        "client_id": "client_id",
+        "oauth_token": "oauth_token"
+    }
 }
