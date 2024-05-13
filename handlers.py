@@ -28,19 +28,20 @@ async def message_handler(msg: Message, state: FSMContext):
             admins = [a.user.id for a in admins]
 
             if msg.from_user.id in admins:
-                await msg.answer(text=f"Ваш канал записан")
+                await msg.answer(text=message_list['getting_chanel']['chanel_added'])
                 await insert_info('users', [msg.chat.id, msg.text])
-                await msg.answer(text="Напишите твич канал чтобы получать уведомления о стримах.")
+                await msg.answer(text=message_list['getting_chanel']['next_step'])
                 await state.set_state(state=ChooseState.waiting_for_twitch)
             else:
-                await msg.answer(text=f'{msg.from_user.id} - этот id не являеться админом')
+                await msg.answer(text=f'{msg.from_user.username}{message_list["getting_chanel"]["error_message"]}')
             
         except Exception as e:
             await msg.answer(f"Такого канала не существует или вы еще не добавили бота в канал. { e }")
+
     elif cur_state == 'ChooseState:waiting_for_twitch':
         user_id = await get_col_by_col('users', 'id', 'tg_id', msg.chat.id)
         await insert_info('twitchers', [user_id, msg.text])
-        await msg.answer(text=f"Твич канал записан")
+        await msg.answer(text=message_list['getting_twitch']['twitch_added'])
         await state.set_state(state=ChooseState.null)
         
 @router.callback_query(lambda call: True)
