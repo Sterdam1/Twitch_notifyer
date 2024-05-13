@@ -21,9 +21,7 @@ async def main():
     dp.include_router(router)
     await bot.delete_webhook(drop_pending_updates=True)
     asyncio.create_task(check_streamers(streamers))
-    # я не понимаю как старт пулинг не перебивал while true
     await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
-
 
 async def check_streamers(streamers):    
     while True:
@@ -38,14 +36,8 @@ async def check_streamers(streamers):
             if stream_start_time:
                 if await is_stream_recently_started(stream_start_time):
                     await bot.send_message(chat_id=s[1], text=f'{streamer_name} начинает прямую трансляцию! \n{url}')
-
-                # else:
-                #     message = f"{streamer_name} транслирует больше 5 минут."
-            # else:
-            #     message = f"{streamer_name} оффлайн."
         
-        await asyncio.sleep(300)  # Подождать 5 минут перед следующей проверкой
-
+        await asyncio.sleep(300) 
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)

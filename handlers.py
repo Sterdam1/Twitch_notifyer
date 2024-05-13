@@ -22,8 +22,6 @@ async def message_handler(msg: Message, state: FSMContext):
     cur_state = await state.get_state()
     if cur_state == 'ChooseState:waiting_for_channel':
         try:
-            # надо сделать так чтобы если такой канал уже есть в базе,
-            # то можно было обновить только админу который его записал
             admins = await bot.get_chat_administrators(msg.text)
             admins = [a.user.id for a in admins]
 

@@ -4,10 +4,6 @@ import datetime
 import pytz
 import config
 
-# client_id = "x8oc2925t0s7f4mbu5hqyri18so9ld"  # Вставьте ваш Client ID, полученный при регистрации вашего приложения на Twitch
-# streamer_username = "buster"  # Имя стримера, чью трансляцию вы хотите отслеживать
-# oauth_token = 'k51e937llodslz9gf7o4nc0iu1affe'
-
 async def get_stream_info(streamer_name, client_id, oauth_token):
     url = f"https://api.twitch.tv/helix/streams?user_login={streamer_name}"
     headers = {
