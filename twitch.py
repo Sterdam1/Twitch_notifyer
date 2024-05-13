@@ -32,20 +32,20 @@ async def is_stream_recently_started(start_time):
     else:
         return False
 
-async def main():
-    while True:
-        streamer_name, stream_start_time = await get_stream_info('sterdammr', config.TWICH_CLIENT_ID, config.TWITCH_OAUTH_TOKEN)
-        if stream_start_time:
-            if await is_stream_recently_started(stream_start_time):
-                message = f"{streamer_name} начал(а) стрим недавно."
-            else:
-                message = f"{streamer_name} транслирует больше 5 минут."
-        else:
-            message = f"{streamer_name} оффлайн."
+# async def main():
+#     while True:
+#         streamer_name, stream_start_time = await get_stream_info('sterdammr', config.TWICH_CLIENT_ID, config.TWITCH_OAUTH_TOKEN)
+#         if stream_start_time:
+#             if await is_stream_recently_started(stream_start_time):
+#                 message = f"{streamer_name} начал(а) стрим недавно."
+#             else:
+#                 message = f"{streamer_name} транслирует больше 5 минут."
+#         else:
+#             message = f"{streamer_name} оффлайн."
         
-        print(message)
+#         print(message)
         
-        await asyncio.sleep(300)  # Подождать 5 минут перед следующей проверкой
+#         await asyncio.sleep(300)  # Подождать 5 минут перед следующей проверкой
 
 # if __name__ == "__main__":
 #     asyncio.run(main())
