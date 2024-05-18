@@ -3,7 +3,7 @@
 import aiosqlite
 import asyncio
 
-DB_PATH = "db.sqlite3"
+DB_PATH = "app\db.sqlite3"
 
 async def create_tables():
     async with aiosqlite.connect(DB_PATH) as db:
