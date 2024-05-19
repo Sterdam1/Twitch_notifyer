@@ -6,7 +6,7 @@ from states import ChooseState, ChangeState
 from aiogram.fsm.context import FSMContext
 import kb
 router = Router()
-from sqlrequests import insert_info, drop_table, get_col_by_col, is_tg_id, change_tg_channel, change_twitch_channel
+from sqlrequests import delete_record, insert_info, drop_table, get_col_by_col, is_tg_id, change_tg_channel, change_twitch_channel, get_tg_channels
 
 from main import bot
 
@@ -78,7 +78,6 @@ async def call_back_handler(call: CallbackQuery, state: FSMContext):
                 await state.set_state(state=ChooseState.waiting_for_channel)
                 await call.message.answer(f'Введите название своего канала.')
             else:
-                # Надо сделать кнопку редактирования канала и добавления twitch
                 await call.message.answer("Вы уже указали канал.")
         elif call.data.split(';')[1] == 'tgchannel':
             await state.set_state(state=ChangeState.change_tg)
@@ -86,5 +85,13 @@ async def call_back_handler(call: CallbackQuery, state: FSMContext):
         elif call.data.split(';')[1] == 'twitchchannel':
             await state.set_state(state=ChangeState.change_twitch)
             await call.message.answer('Введите название ногово твич канала')
+    
+    elif call.data.split(';')[0] == 'stop':
+        tg_channels = await get_tg_channels(call.message.chat.id)
+        keyb = kb.gen_tg_channels(tg_channels)
+        await call.message.answer(f"{message_list['stop']}", reply_markup=keyb)
 
-
+    elif call.data.split(';')[1] == 'delete':
+        await call.message.answer(call.data.split(';')[0])
+        a = await delete_record(call.data.split(';')[0])
+        await call.message.answer(str(a))

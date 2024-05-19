@@ -77,6 +77,31 @@ async def is_tg_id(tg_id):
         await  db.close()
         return tg, formated_result
 
+async def get_tg_channels(tg_id):
+    async with aiosqlite.connect(DB_PATH) as db:
+        some_sql = await db.execute(f"""SELECT channel FROM users WHERE tg_id = '{tg_id}'""")
+        result = await some_sql.fetchall()
+        result = [r[0] for r in result]
+
+        return result
+
+async def delete_record(name):
+    async with aiosqlite.connect(DB_PATH) as db:
+        some_sql = await db.execute(f"SELECT id FROM users WHERE channel = '{name}'")
+        ids = await some_sql.fetchall()
+        if ids:
+            ids = [i[0] for i in ids]
+            for id in ids:
+                some_sql = await db.execute(f"DELETE FROM twitchers WHERE user_id = '{id}'")
+                some_sql = await db.execute(f"DELETE FROM users WHERE id = '{id}'")
+            shit ='uraaa'
+            
+            await db.commit()
+            await db.close()
+        else:
+            return 'ids not found'
+        return shit
+
 async def change_tg_channel(channel, tg_id):
     async with aiosqlite.connect(DB_PATH) as db:
         some_sql = await db.execute(f"UPDATE users SET channel = '{channel}' WHERE tg_id = '{tg_id}'")
