@@ -60,7 +60,41 @@ async def get_all_streamers():
 
         return result
 
+async def is_tg_id(tg_id):
+    async with aiosqlite.connect(DB_PATH) as db:
+        some_sql = await db.execute(f"""SELECT tg_id FROM users WHERE tg_id = {tg_id}""")
+        tg = await some_sql.fetchone()
+        formated_result = {}
+        if tg:
+            some_sql = await db.execute(f"""SELECT users.channel, twitchers.twitch FROM users
+                                            JOIN twitchers ON users.id = twitchers.user_id
+                                            WHERE users.tg_id = {tg[0]}""")
+            result = await some_sql.fetchall()
+            
+            for r in result:
+                formated_result.update({r[0]: r[1]})    
+
+        await  db.close()
+        return tg, formated_result
+
+async def change_tg_channel(channel, tg_id):
+    async with aiosqlite.connect(DB_PATH) as db:
+        some_sql = await db.execute(f"UPDATE users SET channel = '{channel}' WHERE tg_id = '{tg_id}'")
+
+        await db.commit()
+        await db.close()
+
+async def change_twitch_channel(channel, tg_id):
+    async with aiosqlite.connect(DB_PATH) as db:
+        some_sql = await db.execute(f"""UPDATE twitchers SET twitch = '{channel}'
+                                        FROM users
+                                        WHERE users.tg_id = '{tg_id}' AND twitchers.user_id = users.id""")
+        
+        await db.commit()
+        await db.close()
+
 async def drop_table(table):
+    cols = await get_column_names(table)
     async with aiosqlite.connect(DB_PATH) as db:
         some_sql = await db.execute(f"DROP TABLE {table}")
 
