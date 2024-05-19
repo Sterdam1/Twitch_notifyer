@@ -12,5 +12,6 @@ message_list = {'start':{
                 'getting_twitch': {
                     "twitch_added": "Твич записан",
                     "twitch_edited": "Твич изменен"
-                }
+                },
+                'stop': 'Выберите канал' 
                 }
