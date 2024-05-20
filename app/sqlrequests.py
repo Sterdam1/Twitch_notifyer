@@ -94,13 +94,12 @@ async def delete_record(name):
             for id in ids:
                 some_sql = await db.execute(f"DELETE FROM twitchers WHERE user_id = '{id}'")
                 some_sql = await db.execute(f"DELETE FROM users WHERE id = '{id}'")
-            shit ='uraaa'
             
             await db.commit()
             await db.close()
         else:
             return 'ids not found'
-        return shit
+
 
 async def change_tg_channel(channel, tg_id):
     async with aiosqlite.connect(DB_PATH) as db:

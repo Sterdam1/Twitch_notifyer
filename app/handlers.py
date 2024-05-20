@@ -1,5 +1,5 @@
 from aiogram import F, Router
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup
 from aiogram.filters import Command
 from texts import message_list
 from states import ChooseState, ChangeState
@@ -20,7 +20,7 @@ async def start_handler(msg: Message):
     if tg_id:
         await msg.answer(message_list['start']['is_tg'], reply_markup=kb.menu_tg)
     else:
-        await msg.answer(message_list['start']['no_tg'], reply_markup=kb.menu) #message_list['start']
+        await msg.answer(message_list['start']['no_tg'], reply_markup=kb.menu) 
 
 @router.message(ChooseState())
 async def message_handler(msg: Message, state: FSMContext):
@@ -36,16 +36,16 @@ async def message_handler(msg: Message, state: FSMContext):
                 await msg.answer(text=message_list['getting_chanel']['next_step'])
                 await state.set_state(state=ChooseState.waiting_for_twitch)
             else:
-                await msg.answer(text=f'{msg.from_user.username}{message_list["getting_chanel"]["error_message"]}')
+                await msg.answer(text=f'{msg.from_user.username}{message_list["getting_chanel"]["error_message"]}', reply_markup=InlineKeyboardMarkup(inline_keyboard=[kb.back_button]))
             
         except Exception as e:
-            await msg.answer(f"Такого канала не существует или вы еще не добавили бота в канал. { e }")
+            await msg.answer(f"Такого канала не существует или вы еще не добавили бота в канал. { e }", reply_markup=InlineKeyboardMarkup(inline_keyboard=[kb.back_button]))
 
     elif cur_state == 'ChooseState:waiting_for_twitch':
         user_id = await get_col_by_col('users', 'id', 'tg_id', msg.chat.id)
         await insert_info('twitchers', [user_id, msg.text])
-        await msg.answer(text=message_list['getting_twitch']['twitch_added'])
-        await state.set_state(state=ChooseState.null)
+        await msg.answer(text=message_list['getting_twitch']['twitch_added'], reply_markup=InlineKeyboardMarkup(inline_keyboard=[kb.back_button]))
+        await state.set_state(None)
 
 @router.message(ChangeState())
 async def message_handler(msg: Message, state: FSMContext):   
@@ -56,42 +56,50 @@ async def message_handler(msg: Message, state: FSMContext):
             admins = [a.user.id for a in admins]
 
             if msg.chat.id in admins:
-                await msg.answer(text=message_list['getting_chanel']['chanel_edited'])
-                await msg.answer(f'{msg.text}, {msg.chat.id}')
+                await msg.answer(text=message_list['getting_chanel']['chanel_edited'], reply_markup=InlineKeyboardMarkup(inline_keyboard=[kb.back_button]))
                 await change_tg_channel(msg.text, msg.chat.id)
-        
+                    
         except Exception as e:
-            await msg.answer(f'Такого канала не существует или вы еще не добавили бота в канал.')
+            await msg.answer(f'Такого канала не существует или вы еще не добавили бота в канал.', reply_markup=InlineKeyboardMarkup(inline_keyboard=[kb.back_button]))
 
     elif cur_state == 'ChangeState:change_twitch':
-        await msg.answer(text=message_list['getting_twitch']['twitch_edited'])
-        await change_twitch_channel(msg.text, msg.chat.id)
+        await msg.answer(text=message_list['getting_twitch']['twitch_edited'], reply_markup=InlineKeyboardMarkup(inline_keyboard=[kb.back_button]))
 
-    await state.set_state(ChangeState.null)
+    await state.set_state(None)
+
 
 @router.callback_query(lambda call: True)
 async def call_back_handler(call: CallbackQuery, state: FSMContext):
-    if call.data.split(';')[0] == 'ch':
+    if call.data.split(';')[0] == 'new':
         if call.data.split(';')[1] == 'channel':
             tg_id = await get_col_by_col('users', 'tg_id', 'tg_id', call.message.chat.id)
             if not tg_id:
                 await state.set_state(state=ChooseState.waiting_for_channel)
-                await call.message.answer(f'Введите название своего канала.')
+                await call.message.answer(f'Введите название телеграмм канала.')
             else:
                 await call.message.answer("Вы уже указали канал.")
-        elif call.data.split(';')[1] == 'tgchannel':
+    elif call.data.split(';')[0] == 'ch':
+        await call.message.delete()
+        if call.data.split(';')[1] == 'tgchannel':
             await state.set_state(state=ChangeState.change_tg)
-            await call.message.answer('Введите название нового тг канала.')
+            await call.message.answer('Введите название нового тг канала.', reply_markup=InlineKeyboardMarkup(inline_keyboard=[kb.back_button]))
         elif call.data.split(';')[1] == 'twitchchannel':
             await state.set_state(state=ChangeState.change_twitch)
-            await call.message.answer('Введите название ногово твич канала')
-    
-    elif call.data.split(';')[0] == 'stop':
-        tg_channels = await get_tg_channels(call.message.chat.id)
-        keyb = kb.gen_tg_channels(tg_channels)
-        await call.message.answer(f"{message_list['stop']}", reply_markup=keyb)
+            await call.message.answer('Введите название нового твич канала', reply_markup=InlineKeyboardMarkup(inline_keyboard=[kb.back_button]))
+        elif call.data.split(';')[1] == 'stop':
+            tg_channels = await get_tg_channels(call.message.chat.id)
+            keyb = await kb.gen_tg_channels(tg_channels)
+            await call.message.answer(f"{message_list['stop']}", reply_markup=keyb)
 
     elif call.data.split(';')[1] == 'delete':
-        await call.message.answer(call.data.split(';')[0])
+        await call.message.delete()
+        await call.message.answer(message_list['stop_conformation'], reply_markup=InlineKeyboardMarkup(inline_keyboard=[kb.back_button]))
         a = await delete_record(call.data.split(';')[0])
-        await call.message.answer(str(a))
+
+    elif call.data.split(';')[0] == 'menu':
+        await call.message.delete()
+        tg_id = await get_col_by_col('users', 'tg_id', 'tg_id', call.message.chat.id)
+        if tg_id:
+            await call.message.answer(message_list['start']['is_tg'], reply_markup=kb.menu_tg)
+        else:
+            await call.message.answer(message_list['start']['no_tg'], reply_markup=kb.menu)
