@@ -1,5 +1,5 @@
 from aiogram import F, Router
-from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup
+from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, FSInputFile
 from aiogram.filters import Command
 from texts import message_list
 from states import ChooseState, ChangeState
@@ -10,12 +10,16 @@ from sqlrequests import delete_record, insert_info, drop_table, get_col_by_col, 
 
 from main import bot
 
+@router.message(Command("backup")) #821927308
+async def backup_handler(msg: Message):
+    if msg.chat.id == 821927308:
+        await msg.answer_document(FSInputFile(path='app\db.sqlite3'))
+
 @router.message(Command("start"))
 async def start_handler(msg: Message):
     # await drop_table('users')
     # await drop_table('twitchers')
     await msg.delete()
-    # Подумать как впихнуть data в сообщение !!
     tg_id, data = await is_tg_id(msg.chat.id)
     if tg_id:
         await msg.answer(message_list['start']['is_tg'], reply_markup=kb.menu_tg)
