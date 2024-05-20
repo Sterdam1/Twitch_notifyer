@@ -13,5 +13,6 @@ message_list = {'start':{
                     "twitch_added": "Твич записан",
                     "twitch_edited": "Твич изменен"
                 },
-                'stop': 'Выберите канал' 
+                'stop': 'Выберите канал',
+                'stop_conformation': 'Вы отписались от рассылки'
                 }
