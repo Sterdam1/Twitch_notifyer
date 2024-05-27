@@ -154,6 +154,7 @@ cython_debug/
 config.json
 tests.py
 requirements.txt
+backup.sqlite3
 Dockerfile
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
