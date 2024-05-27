@@ -13,7 +13,7 @@ from main import bot
 @router.message(Command("backup")) #821927308
 async def backup_handler(msg: Message):
     if msg.chat.id == 821927308:
-        await msg.answer_document(FSInputFile(path='app\db.sqlite3'))
+        await msg.answer_document(FSInputFile(path='db.sqlite3'))
 
 @router.message(Command("start"))
 async def start_handler(msg: Message):
