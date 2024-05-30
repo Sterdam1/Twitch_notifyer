@@ -21,8 +21,18 @@ async def create_tables():
                 twitch TEXT
             )"""
         )
+        await db.execute(
+            """CREATE TABLE IF NOT EXISTS feedback (
+                id INTEGER PRIMARY KEY,
+                tg_id TEXT,
+                tg_username TEXT,
+                message TEXT
+            )
+            """
+        )
         await db.commit()
         await db.close()
+
 
 async def get_column_names(table):
     async with aiosqlite.connect(DB_PATH) as db:

@@ -8,3 +8,6 @@ class ChooseState(StatesGroup):
 class ChangeState(StatesGroup):
     change_tg = State()
     change_twitch = State()
+
+class FeedbackState(StatesGroup):
+    waiting_for_feedback = State()

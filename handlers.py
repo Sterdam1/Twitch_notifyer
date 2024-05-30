@@ -2,7 +2,7 @@ from aiogram import F, Router
 from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, FSInputFile
 from aiogram.filters import Command
 from texts import message_list
-from states import ChooseState, ChangeState
+from states import ChooseState, ChangeState, FeedbackState
 from aiogram.fsm.context import FSMContext
 import kb
 router = Router()
@@ -15,16 +15,21 @@ async def backup_handler(msg: Message):
     if msg.chat.id == 821927308:
         await msg.answer_document(FSInputFile(path='db.sqlite3'))
 
-@router.message(Command("start"))
-async def start_handler(msg: Message):
+@router.message(Command("start", "feedback"))
+async def start_handler(msg: Message, state: FSMContext):
     # await drop_table('users')
     # await drop_table('twitchers')
+    await drop_table('feedbacl')
     await msg.delete()
     tg_id, data = await is_tg_id(msg.chat.id)
-    if tg_id:
-        await msg.answer(message_list['start']['is_tg'], reply_markup=kb.menu_tg)
-    else:
-        await msg.answer(message_list['start']['no_tg'], reply_markup=kb.menu) 
+    if msg.text == "/start":
+        if tg_id:
+            await msg.answer(message_list['start']['is_tg'], reply_markup=kb.menu_tg)
+        else:
+            await msg.answer(message_list['start']['no_tg'], reply_markup=kb.menu) 
+    elif msg.text == '/feedback':
+        await msg.answer("Напиши отзыв!",) #texts.py
+        await state.set_state(state=FeedbackState.waiting_for_feedback)
 
 @router.message(ChooseState())
 async def message_handler(msg: Message, state: FSMContext):
@@ -71,6 +76,14 @@ async def message_handler(msg: Message, state: FSMContext):
 
     await state.set_state(None)
 
+@router.message(FeedbackState())
+async def message_handler(msg: Message, state: FSMContext):
+    cur_state = await state.get_state()
+    if cur_state == "FeedbackState:waiting_for_feedback":
+        await msg.answer("Спасибо за отзыв") #texts.py
+        await insert_info("feedback", [msg.chat.id, msg.from_user.username, msg.text])
+
+    await state.set_state(None)
 
 @router.callback_query(lambda call: True)
 async def call_back_handler(call: CallbackQuery, state: FSMContext):
