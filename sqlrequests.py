@@ -127,6 +127,14 @@ async def change_twitch_channel(channel, tg_id):
         await db.commit()
         await db.close()
 
+async def get_feedback_table():
+    async with aiosqlite.connect(DB_PATH) as db:
+        some_sql = await db.execute("""SELECT * FROM feedback""")
+        result = await some_sql.fetchall()
+
+        await db.close()
+        return result
+
 async def drop_table(table):
     cols = await get_column_names(table)
     async with aiosqlite.connect(DB_PATH) as db:
