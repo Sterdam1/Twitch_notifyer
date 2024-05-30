@@ -19,7 +19,6 @@ async def backup_handler(msg: Message):
 async def start_handler(msg: Message, state: FSMContext):
     # await drop_table('users')
     # await drop_table('twitchers')
-    await drop_table('feedbacl')
     await msg.delete()
     tg_id, data = await is_tg_id(msg.chat.id)
     if msg.text == "/start":
@@ -28,7 +27,7 @@ async def start_handler(msg: Message, state: FSMContext):
         else:
             await msg.answer(message_list['start']['no_tg'], reply_markup=kb.menu) 
     elif msg.text == '/feedback':
-        await msg.answer("Напиши отзыв!",) #texts.py
+        await msg.answer(message_list['feedback'], reply_markup=InlineKeyboardMarkup(inline_keyboard=[kb.back_button])) 
         await state.set_state(state=FeedbackState.waiting_for_feedback)
 
 @router.message(ChooseState())
@@ -80,7 +79,7 @@ async def message_handler(msg: Message, state: FSMContext):
 async def message_handler(msg: Message, state: FSMContext):
     cur_state = await state.get_state()
     if cur_state == "FeedbackState:waiting_for_feedback":
-        await msg.answer("Спасибо за отзыв") #texts.py
+        await msg.answer(message_list['feedback_thanks'], reply_markup=InlineKeyboardMarkup(inline_keyboard=[kb.back_button])) #texts.py
         await insert_info("feedback", [msg.chat.id, msg.from_user.username, msg.text])
 
     await state.set_state(None)
@@ -115,6 +114,7 @@ async def call_back_handler(call: CallbackQuery, state: FSMContext):
 
     elif call.data.split(';')[0] == 'menu':
         await call.message.delete()
+        await state.set_state(None)
         tg_id = await get_col_by_col('users', 'tg_id', 'tg_id', call.message.chat.id)
         if tg_id:
             await call.message.answer(message_list['start']['is_tg'], reply_markup=kb.menu_tg)
