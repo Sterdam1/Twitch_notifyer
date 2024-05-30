@@ -13,7 +13,7 @@ from main import bot
 @router.message(Command("backup")) #821927308
 async def backup_handler(msg: Message):
     if msg.chat.id == 821927308:
-        await msg.answer_document(FSInputFile(path='db.sqlite3'))
+        await msg.answer_document(FSInputFile(path='db.sqlite3'))       
 
 @router.message(Command("start", "feedback"))
 async def start_handler(msg: Message, state: FSMContext):
@@ -72,6 +72,7 @@ async def message_handler(msg: Message, state: FSMContext):
 
     elif cur_state == 'ChangeState:change_twitch':
         await msg.answer(text=message_list['getting_twitch']['twitch_edited'], reply_markup=InlineKeyboardMarkup(inline_keyboard=[kb.back_button]))
+        await change_twitch_channel(msg.text, msg.chat.id)
 
     await state.set_state(None)
 
