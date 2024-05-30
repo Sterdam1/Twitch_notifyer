@@ -6,14 +6,17 @@ from states import ChooseState, ChangeState, FeedbackState
 from aiogram.fsm.context import FSMContext
 import kb
 router = Router()
-from sqlrequests import delete_record, insert_info, drop_table, get_col_by_col, is_tg_id, change_tg_channel, change_twitch_channel, get_tg_channels
+from sqlrequests import get_feedback_table, delete_record, insert_info, drop_table, get_col_by_col, is_tg_id, change_tg_channel, change_twitch_channel, get_tg_channels
 
 from main import bot
 
 @router.message(Command("backup")) #821927308
 async def backup_handler(msg: Message):
+    await msg.delete()
     if msg.chat.id == 821927308:
-        await msg.answer_document(FSInputFile(path='db.sqlite3'))       
+        # await msg.answer_document(FSInputFile(path='db.sqlite3'))  
+        table = await get_feedback_table()
+        await msg.answer(str(table))     
 
 @router.message(Command("start", "feedback"))
 async def start_handler(msg: Message, state: FSMContext):

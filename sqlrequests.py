@@ -129,9 +129,24 @@ async def change_twitch_channel(channel, tg_id):
 
 async def get_feedback_table():
     async with aiosqlite.connect(DB_PATH) as db:
+        formated_table = {}
         some_sql = await db.execute("""SELECT * FROM feedback""")
-        result = await some_sql.fetchall()
+        table = await some_sql.fetchall()
 
+        for t in table:
+            if t[1] not in formated_table:
+                formated_table[t[1]] = {'names': [t[2]], 'messages': [t[3]]} 
+            else:
+                if t[2] not in formated_table[t[1]]['names']:
+                    formated_table[t[1]]['names'].append(t[2])
+                formated_table[t[1]]['messages'].append(t[3])
+
+        result = ''
+        for t in formated_table:
+            messages = "\n".join(formated_table[t]["messages"])
+            result += f'Пользователь id {t} \nИменами {", ".join(formated_table[t]["names"])} \n' + \
+            f'Отзывы: \n{messages}\n\n'
+        
         await db.close()
         return result
 
