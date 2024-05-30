@@ -14,7 +14,7 @@ from main import bot
 async def backup_handler(msg: Message):
     await msg.delete()
     if msg.chat.id == 821927308:
-        # await msg.answer_document(FSInputFile(path='db.sqlite3'))  
+        await msg.answer_document(FSInputFile(path='db.sqlite3'))  
         table = await get_feedback_table()
         await msg.answer(str(table))     
 
