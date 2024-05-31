@@ -157,6 +157,7 @@ requirements.txt
 backup.sqlite3
 Dockerfile
 app
+pipipopo.py
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
 #  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
