@@ -5,6 +5,7 @@ from texts import message_list
 from states import ChooseState, ChangeState, FeedbackState
 from aiogram.fsm.context import FSMContext
 import kb
+import datetime
 router = Router()
 from sqlrequests import get_feedback_table, delete_record, insert_info, drop_table, get_col_by_col, is_tg_id, change_tg_channel, change_twitch_channel, get_tg_channels
 
@@ -20,8 +21,6 @@ async def backup_handler(msg: Message):
 
 @router.message(Command("start", "feedback"))
 async def start_handler(msg: Message, state: FSMContext):
-    # await drop_table('users')
-    # await drop_table('twitchers')
     await msg.delete()
     tg_id, data = await is_tg_id(msg.chat.id)
     if msg.text == "/start":
@@ -82,9 +81,10 @@ async def message_handler(msg: Message, state: FSMContext):
 @router.message(FeedbackState())
 async def message_handler(msg: Message, state: FSMContext):
     cur_state = await state.get_state()
+    date_today = datetime.date.today().strftime('%d.%m.%Y')
     if cur_state == "FeedbackState:waiting_for_feedback":
-        await msg.answer(message_list['feedback_thanks'], reply_markup=InlineKeyboardMarkup(inline_keyboard=[kb.back_button])) #texts.py
-        await insert_info("feedback", [msg.chat.id, msg.from_user.username, msg.text])
+        await msg.answer(message_list['feedback_thanks'], reply_markup=InlineKeyboardMarkup(inline_keyboard=[kb.back_button])) 
+        await insert_info("feedback", [msg.chat.id, msg.from_user.username, msg.text, date_today]) #datetime
 
     await state.set_state(None)
 

@@ -26,7 +26,8 @@ async def create_tables():
                 id INTEGER PRIMARY KEY,
                 tg_id TEXT,
                 tg_username TEXT,
-                message TEXT
+                message TEXT,
+                date TEXT
             )
             """
         )
@@ -135,16 +136,24 @@ async def get_feedback_table():
 
         for t in table:
             if t[1] not in formated_table:
-                formated_table[t[1]] = {'names': [t[2]], 'messages': [t[3]]} 
+                formated_table[t[1]] = {'names': [t[2]], 'messages': {t[4]: [t[3]]}}
             else:
                 if t[2] not in formated_table[t[1]]['names']:
                     formated_table[t[1]]['names'].append(t[2])
-                formated_table[t[1]]['messages'].append(t[3])
+                if t[4] not in formated_table[t[1]]['messages']:
+                    formated_table[t[1]]['messages'][t[4]] = [t[3]]
+                else:
+                    formated_table[t[1]]['messages'][t[4]].append(t[3])
 
         result = ''
         for t in formated_table:
-            messages = "\n".join(formated_table[t]["messages"])
-            result += f'Пользователь id {t} \nИменами {", ".join(formated_table[t]["names"])} \n' + \
+            messages = ''
+            for date in formated_table[t]['messages']:
+                messages += f'{date}\n'
+                for m in formated_table[t]['messages'][date]:
+                    messages += f'{m}\n'
+            # messages = "\n".join(table[t]["messages"])
+            result += f'Пользователь с id {t} \nИмена: {", ".join(formated_table[t]["names"])} \n' + \
             f'Отзывы: \n{messages}\n\n'
         
         await db.close()
