@@ -6,6 +6,7 @@ from aiogram.enums.parse_mode import ParseMode
 from aiogram.fsm.storage.memory import MemoryStorage
 
 import config
+from texts import message_list
 from handlers import router
 
 from sqlrequests import create_tables, get_all_streamers, get_users_ids
@@ -44,7 +45,7 @@ async def check_streamers():
 
 async def send_patchnotes(users):
     for id in users:
-        await bot.send_message(chat_id=id, text='patchnote')
+        await bot.send_message(chat_id=id, text=message_list['patchnotes'])
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
