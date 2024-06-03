@@ -51,7 +51,16 @@ async def get_col_by_col(table, col, filter, value):
             return result[0][0]
         else: 
             return None
-    
+
+async def get_users_ids():
+    async with aiosqlite.connect(DB_PATH) as db:
+        some_sql = await db.execute(f"SELECT tg_id FROM users")
+        result = await some_sql.fetchall()
+
+        await db.close()
+
+        return [i[0] for i in result]
+
 async def insert_info(table, data):
     async with aiosqlite.connect(DB_PATH) as db:
         cols = await get_column_names(table)

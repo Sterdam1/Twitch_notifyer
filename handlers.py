@@ -11,7 +11,7 @@ from sqlrequests import get_feedback_table, delete_record, insert_info, drop_tab
 
 from main import bot
 
-@router.message(Command("backup")) #821927308
+@router.message(Command("backup")) 
 async def backup_handler(msg: Message):
     await msg.delete()
     if msg.chat.id == 821927308:
