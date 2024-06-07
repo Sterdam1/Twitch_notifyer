@@ -45,7 +45,10 @@ async def check_streamers():
 
 async def send_patchnotes(users):
     for id in users:
-        await bot.send_message(chat_id=id, text=message_list['patchnotes'])
+        try:
+            await bot.send_message(chat_id=id, text=message_list['patchnotes'])
+        except:
+            pass
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
