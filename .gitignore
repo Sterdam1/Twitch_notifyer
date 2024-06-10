@@ -156,7 +156,7 @@ tests.py
 requirements.txt
 backup.sqlite3
 Dockerfile
-app
+app/__pycache__
 pipipopo.py
 sqlrequests.py
 db.sqlite3
