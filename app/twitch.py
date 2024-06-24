@@ -24,6 +24,6 @@ async def is_stream_recently_started(start_time):
         stream_start_time = datetime.datetime.strptime(start_time, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=pytz.utc)
         current_time = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
         time_difference = current_time - stream_start_time
-        return time_difference.total_seconds() <= 300 
+        return time_difference.total_seconds() <= 300, time_difference
     else:
         return False
