@@ -128,7 +128,8 @@ async def call_back_handler(call: CallbackQuery, state: FSMContext):
             else:
                 await call.message.answer("Вы уже указали канал.")
     elif call.data.split(';')[0] == 'ch':
-        await call.message.delete()
+        await bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+        # await call.message.delete()
         if call.data.split(';')[1] == 'tgchannel':
             await state.set_state(state=ChangeState.change_tg)
             await call.message.answer('Введите название нового тг канала.', reply_markup=InlineKeyboardMarkup(inline_keyboard=[kb.back_button]))
@@ -141,12 +142,14 @@ async def call_back_handler(call: CallbackQuery, state: FSMContext):
             await call.message.answer(f"{message_list['stop']}", reply_markup=keyb)
 
     elif call.data.split(';')[1] == 'delete':
-        await call.message.delete()
+        await bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+        # await call.message.delete()
         await call.message.answer(message_list['stop_conformation'], reply_markup=InlineKeyboardMarkup(inline_keyboard=[kb.back_button]))
         a = await delete_record(call.data.split(';')[0])
 
     elif call.data.split(';')[0] == 'menu':
-        await call.message.delete()
+        await bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+        # await call.message.delete()
         await state.set_state(None)
         tg_id = await get_col_by_col('users', 'tg_id', 'tg_id', call.message.chat.id)
         if tg_id:

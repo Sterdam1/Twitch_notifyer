@@ -22,7 +22,7 @@ async def main():
     dp = Dispatcher(storage=MemoryStorage())
     dp.include_router(router)
     await bot.delete_webhook(drop_pending_updates=True)
-    # asyncio.create_task(check_streamers())
+    asyncio.create_task(check_streamers())
     # await send_patchnotes(users_ids, message_list['patchnotes'])
     await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
 
@@ -38,9 +38,13 @@ async def check_streamers():
             # await bot.send_message(chat_id=s[1], text=streamer_name)
             streamer_name, stream_start_time = await get_stream_info(streamer_name, config.TWICH_CLIENT_ID, config.TWITCH_OAUTH_TOKEN)
             if stream_start_time:
-                if await is_stream_recently_started(stream_start_time):
+                is_diff, time_diff = await is_stream_recently_started(stream_start_time)
+                if is_diff:
+                    logging.info(f"{streamer_name} start streaming at {stream_start_time}")
                     await bot.send_message(chat_id=s[1], text=f'{streamer_name} начинает прямую трансляцию! \n{url}')
-        
+                else:    
+                    logging.info(f"{streamer_name} streaming {time_diff}")
+                
         await asyncio.sleep(300) 
 
 async def send_patchnotes(users, message_text): #надо назвать подругому
@@ -51,7 +55,7 @@ async def send_patchnotes(users, message_text): #надо назвать под�
             pass
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.INFO, datefmt='%Y-%m-%d %H:%M:%S', format='%(asctime)s - [%(levelname)s] - (%(filename)s) - %(message)s')
     loop = asyncio.get_event_loop()
     loop.run_until_complete(main())
-    
+    # loop.run_forever(main()) проверить будет ли оно кражить таски если тг упадет?
