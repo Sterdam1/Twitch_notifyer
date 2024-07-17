@@ -152,7 +152,7 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 config.json
-tests.py
+get_oauth.py
 requirements.txt
 backup.sqlite3
 Dockerfile
