@@ -57,5 +57,5 @@ async def send_patchnotes(users, message_text): #надо назвать под�
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, datefmt='%Y-%m-%d %H:%M:%S', format='%(asctime)s - [%(levelname)s] - (%(filename)s) - %(message)s')
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
-    # loop.run_forever(main()) проверить будет ли оно кражить таски если тг упадет?
+    loop.create_task(main())
+    loop.run_forever() 
