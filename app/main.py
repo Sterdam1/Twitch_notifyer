@@ -37,6 +37,7 @@ async def check_streamers():
                 streamer_name = url
             # await bot.send_message(chat_id=s[1], text=streamer_name)
             streamer_name, stream_start_time = await get_stream_info(streamer_name, config.TWICH_CLIENT_ID, config.TWITCH_OAUTH_TOKEN)
+            # logging.info(f'{streamer_name}, {stream_start_time}')
             if stream_start_time:
                 is_diff, time_diff = await is_stream_recently_started(stream_start_time)
                 if is_diff:

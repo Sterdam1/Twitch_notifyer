@@ -29,7 +29,8 @@ async def get_stream_info(streamer_name, client_id, oauth_token):
                     return streamer_name, None
     
     except Exception as e:
-        print(logging.info(e))
+        print(f'{data}\n{logging.info(e)}')
+        return streamer_name, None 
 
 
 async def is_stream_recently_started(start_time):
