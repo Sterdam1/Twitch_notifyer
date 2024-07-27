@@ -3,5 +3,6 @@
     "twitch": {
         "client_id": "client_id",
         "oauth_token": "oauth_token"
+        
     }
 }
