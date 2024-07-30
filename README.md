@@ -13,7 +13,7 @@ The Telegram Stream Notification Bot is designed to send notifications about liv
 * Receive Feedback: Admins can view the feedback submitted by users to continuously improve the bot.
 * Send message: Admin can send message to all users. For example, send a message about an error.
 
-### **Usage**
+## **Usage**
 *	Start chat with bot: Search for ‘Twitch notifyer’ or click the link and type /start.
 *	Add bot to channel: Invite bot to your telegram channel and give him permission to send messages.
 *	Choose channels: Add telegram channel and then twitch channel
