@@ -1,4 +1,4 @@
-## **Overview**
+# **Overview**
 
 The Telegram Stream Notification Bot is designed to send notifications about live streams directly to your Telegram channel. This bot allows you to configure channel and leave feedback to improve the service.
 
